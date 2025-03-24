@@ -26,15 +26,6 @@ def add_grain(img, intensity=0.06):
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_saturation(img, factor=0.9):
-    """Adjust saturation in HSV color space
-    factor: saturation scaling factor (0.0-1.0)
-    """
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    h, s, v = cv2.split(hsv)
-    s = np.clip(s * factor, 0, 255).astype(np.uint8)
-    return cv2.cvtColor(cv2.merge([h, s, v]), cv2.COLOR_HSV2BGR)
-
 def adjust_contrast(img, clip_limit=0.9):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)

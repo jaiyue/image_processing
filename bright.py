@@ -26,7 +26,7 @@ def add_grain(img, intensity=0.06):
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_saturation(img, factor=0.9):
+def adjust_saturation(img, factor=0.85):
     """Adjust saturation in HSV color space
     factor: saturation scaling factor (0.0-1.0)
     """
@@ -35,11 +35,11 @@ def adjust_saturation(img, factor=0.9):
     s = np.clip(s * factor, 0, 255).astype(np.uint8)
     return cv2.cvtColor(cv2.merge([h, s, v]), cv2.COLOR_HSV2BGR)
 
-def adjust_contrast(img, clip_limit=0.9):
+def adjust_contrast(img, clip_limit=0.8):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(8,8))
+    clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(9,9))
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
 def highlight_blue_boost(img, threshold=230, blue_boost=10):
@@ -65,7 +65,7 @@ def boost_red_green_in_shadows(img, threshold=100, boost_red=5, boost_green=30):
     adjusted_lab = cv2.merge([l, a, b])
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def adjust_brightness(img, gamma=1.9):
+def adjust_brightness(img, gamma=1.8):
     """Adjust brightness in LAB color space
     gamma < 1.0: brighten image
     gamma = 1.0: no change

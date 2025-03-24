@@ -1,15 +1,14 @@
 import cv2
 import numpy as np
 
-# ------------------ 基础调整函数 ------------------
 def white_balance(img):
     """ 基于灰度世界假设的白平衡调整 """
     result = img.copy()
     
     # 计算每个通道的均值
-    avg_b = np.mean(img[:, :, 0])  # B通道均值
-    avg_g = np.mean(img[:, :, 1])  # G通道均值
-    avg_r = np.mean(img[:, :, 2])  # R通道均值
+    avg_b = np.mean(img[:, :, 0])
+    avg_g = np.mean(img[:, :, 1])
+    avg_r = np.mean(img[:, :, 2])
 
     # 计算白平衡增益系数
     avg_gray = (avg_b + avg_g + avg_r) / 3
@@ -24,7 +23,7 @@ def white_balance(img):
 
     return result.astype(np.uint8)
 
-def add_grain(img, intensity=0.03):
+def add_grain(img, intensity=0.06):
     """增加胶片颗粒效果"""
     noise = np.random.normal(0, intensity*255, img.shape)
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
@@ -44,15 +43,11 @@ def adjust_contrast(img, clip_limit = 0.9):  # 默认值设为0.7以降低对比
     """对比度调整（CLAHE）"""
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(12,12))
+    clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(8,8))
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
 # ------------------ 新增高光区域蓝色增强函数 ------------------
-def highlight_blue_boost(img, threshold=220, blue_boost=10):
-    """识别高光区域并增加蓝色（LAB颜色空间处理）
-    :param threshold: 高光亮度阈值（0-255）
-    :param blue_boost: 蓝色增强强度（负值增强蓝色，正值增强黄色）
-    """
+def highlight_blue_boost(img, threshold=230, blue_boost=10):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
@@ -67,11 +62,6 @@ def highlight_blue_boost(img, threshold=220, blue_boost=10):
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
 def boost_red_green_in_shadows(img, threshold=100, boost_red=5, boost_green=30):
-    """识别暗部区域并增加红色和绿色（LAB颜色空间处理）
-    
-    :param threshold: 暗部亮度阈值（0-255，值越低，选取的暗部区域越少）
-    :param boost_strength: 颜色增强强度（正值增加红色和绿色）
-    """
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
@@ -86,7 +76,7 @@ def boost_red_green_in_shadows(img, threshold=100, boost_red=5, boost_green=30):
     adjusted_lab = cv2.merge([l, a, b])
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def adjust_brightness(img, gamma=1.6):
+def adjust_brightness(img, gamma=1.9):
     """
     基础亮度调节函数（LAB颜色空间处理）
     :param gamma: 亮度调节系数
@@ -113,7 +103,7 @@ def adjust_brightness(img, gamma=1.6):
     # 防止过曝的最终裁剪
     return np.clip(result, 0, 255).astype(np.uint8)
 
-def sharpen_image(img, blur_kernel=(5,5), sigma=0, alpha=1.5, beta=-0.5):
+def sharpen_image(img, blur_kernel=(5,5), sigma=0, alpha=2, beta=-1):
     """改进的锐化函数（避免颜色偏移）"""
     blurred = cv2.GaussianBlur(img, blur_kernel, sigmaX=sigma)
     sharpened = cv2.addWeighted(img, alpha, blurred, beta, 0)

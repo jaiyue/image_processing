@@ -34,7 +34,6 @@ def load_images(input_path):
 def processing_pipeline(img):
     #初步去噪
     img = salt_and_pepper(img)
-    img = sharpen_image(img)
     
     img = remove_gaussian_noise(img)
 
@@ -42,6 +41,7 @@ def processing_pipeline(img):
     img = perspective(img)
     
     img = repair_image(img)
+    img = sharpen_image(img)
 
     #  对比度，亮度
     img = adjust_contrast(img)

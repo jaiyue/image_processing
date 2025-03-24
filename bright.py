@@ -26,14 +26,14 @@ def add_grain(img, intensity=0.06):
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_contrast(img, clip_limit=0.9):
+def adjust_contrast(img, clip_limit=0.8):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(9,9))
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
-def highlight_blue_boost(img, threshold=220, blue_boost=10):
+def highlight_blue_boost(img, threshold=200, blue_boost=8):
     #Enhance blue in highlight areas
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
@@ -44,23 +44,8 @@ def highlight_blue_boost(img, threshold=220, blue_boost=10):
     adjusted_lab = cv2.merge([l, a, b])
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def darken_gray_areas(img, threshold=125, darken_amount=20):
-    # Darken gray areas
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
-    
-    # Identify gray areas (where a and b channels are close to 0)
-    gray_mask = (np.abs(a) < threshold) & (np.abs(b) < threshold)
-    
-    # Darken the L channel for gray areas
-    l[gray_mask] = np.clip(l[gray_mask] - darken_amount, 0, 255)
-    
-    # Merge the adjusted L channel back with a and b channels
-    adjusted_lab = cv2.merge([l, a, b])
-    
-    return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def adjust_brightness(img, gamma=1.7):
+def adjust_brightness(img, gamma=1.5):
     """Adjust brightness in LAB color space
     gamma < 1.0: brighten image
     gamma = 1.0: no change
@@ -81,7 +66,7 @@ def adjust_brightness(img, gamma=1.7):
     
     return np.clip(result, 0, 255).astype(np.uint8)
 
-def sharpen_image(img, blur_kernel=(3,3), sigma=0, alpha=2, beta=-1):
+def sharpen_image(img, blur_kernel=(3,3), sigma=0, alpha=1.6, beta=-0.5):
     """Improved sharpening function that avoids color shifts"""
     blurred = cv2.GaussianBlur(img, blur_kernel, sigmaX=sigma)
     sharpened = cv2.addWeighted(img, alpha, blurred, beta, 0)

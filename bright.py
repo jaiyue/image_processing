@@ -26,7 +26,7 @@ def add_grain(img, intensity=0.06):
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_saturation(img, factor=0.85):
+def adjust_saturation(img, factor=0.9):
     """Adjust saturation in HSV color space
     factor: saturation scaling factor (0.0-1.0)
     """
@@ -35,14 +35,14 @@ def adjust_saturation(img, factor=0.85):
     s = np.clip(s * factor, 0, 255).astype(np.uint8)
     return cv2.cvtColor(cv2.merge([h, s, v]), cv2.COLOR_HSV2BGR)
 
-def adjust_contrast(img, clip_limit=0.8):
+def adjust_contrast(img, clip_limit=0.9):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(9,9))
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
-def highlight_blue_boost(img, threshold=230, blue_boost=10):
+def highlight_blue_boost(img, threshold=220, blue_boost=10):
     #Enhance blue in highlight areas
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
@@ -53,19 +53,23 @@ def highlight_blue_boost(img, threshold=230, blue_boost=10):
     adjusted_lab = cv2.merge([l, a, b])
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def boost_red_green_in_shadows(img, threshold=100, boost_red=5, boost_green=30):
-    #Boost red and green in shadow areas
+def darken_gray_areas(img, threshold=125, darken_amount=20):
+    # Darken gray areas
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
-    shadow_mask = (l < threshold).astype(np.uint8)
-    a = cv2.add(a, boost_red * shadow_mask)
-    b = cv2.add(b, boost_green * shadow_mask)
-
+    # Identify gray areas (where a and b channels are close to 0)
+    gray_mask = (np.abs(a) < threshold) & (np.abs(b) < threshold)
+    
+    # Darken the L channel for gray areas
+    l[gray_mask] = np.clip(l[gray_mask] - darken_amount, 0, 255)
+    
+    # Merge the adjusted L channel back with a and b channels
     adjusted_lab = cv2.merge([l, a, b])
+    
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
-def adjust_brightness(img, gamma=1.8):
+def adjust_brightness(img, gamma=1.7):
     """Adjust brightness in LAB color space
     gamma < 1.0: brighten image
     gamma = 1.0: no change
@@ -86,7 +90,7 @@ def adjust_brightness(img, gamma=1.8):
     
     return np.clip(result, 0, 255).astype(np.uint8)
 
-def sharpen_image(img, blur_kernel=(5,5), sigma=0, alpha=2, beta=-1):
+def sharpen_image(img, blur_kernel=(3,3), sigma=0, alpha=2, beta=-1):
     """Improved sharpening function that avoids color shifts"""
     blurred = cv2.GaussianBlur(img, blur_kernel, sigmaX=sigma)
     sharpened = cv2.addWeighted(img, alpha, blurred, beta, 0)

@@ -26,7 +26,7 @@ def add_grain(img, intensity=0.06):
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_contrast(img, clip_limit=0.8):
+def adjust_contrast(img, clip_limit=0.5):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
@@ -45,7 +45,7 @@ def highlight_blue_boost(img, threshold=200, blue_boost=8):
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
 
-def adjust_brightness(img, gamma=1.5):
+def adjust_brightness(img, gamma=1.1):
     """Adjust brightness in LAB color space
     gamma < 1.0: brighten image
     gamma = 1.0: no change

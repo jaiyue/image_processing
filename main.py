@@ -3,7 +3,7 @@ import os
 import argparse
 from perspective import perspective
 from denoise import salt_and_pepper,remove_gaussian_noise
-from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image # 新增导入
+from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image, highlight_blue_boost, adjust_saturation,boost_red_green_in_shadows # 新增导入
 from repair import repair_image
 
 
@@ -34,19 +34,22 @@ def load_images(input_path):
 def processing_pipeline(img):
     #初步去噪
     img = salt_and_pepper(img)
+    img = sharpen_image(img)
     
     img = remove_gaussian_noise(img)
 
     #几何校正
     img = perspective(img)
-    img = sharpen_image(img)
     
     img = repair_image(img)
 
     #  对比度，亮度
     img = adjust_contrast(img)
     img = white_balance(img)
+    img = adjust_saturation(img)
     img = adjust_brightness(img)
+    img = highlight_blue_boost(img)
+    img = boost_red_green_in_shadows(img)
     img = add_grain(img)
 
     return img

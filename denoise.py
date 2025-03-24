@@ -6,7 +6,7 @@ def salt_and_pepper(img):
     img = cv2.medianBlur(img, 3)  # 先去椒盐噪声
     return img
   
-def remove_gaussian_noise(img, h_base=3, h_white=5, brightness_thresh=225):
+def remove_gaussian_noise(img, h_base=3, h_white=5, brightness_thresh=230):
     """
     改进版非局部均值去噪，对白色区域增强处理
     参数：

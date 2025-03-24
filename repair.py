@@ -31,7 +31,7 @@ def detect_black_defect(img):
         
         if circularity > 0.7:
             (x, y), r = cv2.minEnclosingCircle(max_contour)
-            x += w//2  # 调整坐标为整个图像的坐标系
+            x += w//2 
             return (int(x), int(y), int(r * 1.2))  # 增加半径以确保覆盖整个缺失区域
     return None
 

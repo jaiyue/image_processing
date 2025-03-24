@@ -34,10 +34,12 @@ def load_images(input_path):
 def processing_pipeline(img):
     #初步去噪
     img = salt_and_pepper(img)
-    #img = remove_gaussian_noise(img)
+    
+    img = remove_gaussian_noise(img)
 
     #几何校正
     img = perspective(img)
+    img = sharpen_image(img)
     
     img = repair_image(img)
 

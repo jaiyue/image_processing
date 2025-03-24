@@ -36,9 +36,9 @@ def remove_gaussian_noise(img, h_base=3, h_white=5, brightness_thresh=225):
     # 仅对白色区域应用强力去噪
     denoised_strong = cv2.fastNlMeansDenoisingColored(
         img, None,
-        h=h_white, hColor=h_white//2,  # 降低色度去噪强度避免变色
-        templateWindowSize=9,           # 增大模板窗口
-        searchWindowSize=35             # 扩大搜索范围
+        h=h_white, hColor=h_white//2,
+        templateWindowSize=9,
+        searchWindowSize=35
     )
     
     # 混合结果（白色区域使用强去噪，其他区域使用常规去噪）

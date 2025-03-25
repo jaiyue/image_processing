@@ -20,20 +20,20 @@ def white_balance(img):
 
     return result.astype(np.uint8)
 
-def add_grain(img, intensity=0.06):
+def add_grain(img, intensity=0.05):
     """Add film grain effect"""
     noise = np.random.normal(0, intensity*255, img.shape)
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)
 
-def adjust_contrast(img, clip_limit=0.5):
+def adjust_contrast(img, clip_limit=0.4):
     #Contrast adjustment
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(9,9))
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
-def highlight_blue_boost(img, threshold=200, blue_boost=8):
+def highlight_blue_boost(img, threshold=235, blue_boost=20):
     #Enhance blue in highlight areas
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
@@ -44,8 +44,23 @@ def highlight_blue_boost(img, threshold=200, blue_boost=8):
     adjusted_lab = cv2.merge([l, a, b])
     return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
 
+def darken_highlights(img, threshold=235, darken_amount=20):
+    # Darken highlight areas
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    
+    # Create a mask for bright areas
+    highlight_mask = (l > threshold).astype(np.uint8)
+    
+    # Reduce brightness in highlight areas
+    l = cv2.subtract(l, darken_amount * highlight_mask)
 
-def adjust_brightness(img, gamma=1.1):
+    # Merge adjusted channels and convert back to BGR
+    adjusted_lab = cv2.merge([l, a, b])
+    return cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2BGR)
+
+
+def adjust_brightness(img, gamma=1.3):
     """Adjust brightness in LAB color space
     gamma < 1.0: brighten image
     gamma = 1.0: no change
@@ -66,7 +81,7 @@ def adjust_brightness(img, gamma=1.1):
     
     return np.clip(result, 0, 255).astype(np.uint8)
 
-def sharpen_image(img, blur_kernel=(3,3), sigma=0, alpha=1.6, beta=-0.5):
+def sharpen_image(img, blur_kernel=(3,3), sigma=0, alpha=1.6, beta=-0.6):
     """Improved sharpening function that avoids color shifts"""
     blurred = cv2.GaussianBlur(img, blur_kernel, sigmaX=sigma)
     sharpened = cv2.addWeighted(img, alpha, blurred, beta, 0)

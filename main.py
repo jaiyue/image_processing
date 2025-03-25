@@ -3,7 +3,7 @@ import os
 import argparse
 from perspective import perspective
 from denoise import salt_and_pepper, remove_gaussian_noise
-from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image, highlight_blue_boost
+from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image, highlight_blue_boost,darken_highlights 
 from repair import repair_image
 
 def parse_arguments():
@@ -41,7 +41,7 @@ def processing_pipeline(img):
     img = adjust_contrast(img)
     img = white_balance(img)
     img = adjust_brightness(img)
-    img = highlight_blue_boost(img)
+    img = darken_highlights(img)
     img = add_grain(img)
     return img
 

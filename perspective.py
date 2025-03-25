@@ -14,14 +14,13 @@ def order_points(pts):
 
 
 def shrink_polygon(pts, shrink_pixels=2):
-    """ 将检测到的四边形向中心缩进 shrink_pixels 个像素 """
-    center = np.mean(pts, axis=0)  # 计算四边形中心点
+    center = np.mean(pts, axis=0)
     new_pts = []
 
     for p in pts:
         direction = p - center
         norm = np.linalg.norm(direction)
-        if norm > 1e-6:  # 避免除零错误
+        if norm > 1e-6:
             direction = (direction / norm) * shrink_pixels
         new_pts.append(p - direction)
 
@@ -30,7 +29,7 @@ def shrink_polygon(pts, shrink_pixels=2):
 
 def four_point_transform(image, pts):
     rect = order_points(pts)
-    rect = shrink_polygon(rect, shrink_pixels=2)  # 在这里缩进 2 像素
+    rect = shrink_polygon(rect, shrink_pixels=2)
     dst = np.array([[0, 0], [255, 0], [255, 255], [0, 255]], dtype="float32")
     M = cv2.getPerspectiveTransform(rect, dst)
     return cv2.warpPerspective(image, M, (256, 256), flags=cv2.INTER_CUBIC)

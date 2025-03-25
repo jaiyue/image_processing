@@ -41,15 +41,15 @@ def progressive_inpaint(img, defect_params, max_iters=5):
     mask = np.zeros_like(img[:, :, 0], dtype=np.uint8)
     cv2.circle(mask, (x, y), int(r), 255, -1)
 
-    # 迭代修复
+    # Iterative repair
     for _ in range(max_iters):
         edges = cv2.Canny(mask, 50, 150)
         edges = cv2.dilate(edges, cv2.getStructuringElement(
-            cv2.MORPH_ELLIPSE, (3, 3)))  # 解决边缘丢失
+            cv2.MORPH_ELLIPSE, (3, 3)))  # Solves edge loss
         mask = cv2.dilate(mask, cv2.getStructuringElement(
-            cv2.MORPH_ELLIPSE, (3, 3)))  # 逐层扩展
+            cv2.MORPH_ELLIPSE, (3, 3)))
 
-        img = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)  # 更稳定的修复方式
+        img = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)
 
     return img
 

@@ -3,14 +3,16 @@ import os
 import argparse
 from perspective import perspective
 from denoise import salt_and_pepper, remove_gaussian_noise
-from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image, highlight_blue_boost,darken_highlights 
+from bright import adjust_contrast, white_balance, adjust_brightness, add_grain, sharpen_image, highlight_blue_boost, darken_highlights
 from repair import repair_image
+
 
 def parse_arguments():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Image Processing')
     parser.add_argument('input_path', type=str, help='Input directory path')
     return parser.parse_args()
+
 
 def load_images(input_path):
     # Load images
@@ -21,7 +23,7 @@ def load_images(input_path):
             return [(img, os.path.basename(input_path))]
         else:
             return []
-    
+
     # if directory case
     images = []
     for f in os.listdir(input_path):
@@ -31,6 +33,7 @@ def load_images(input_path):
             if img is not None:
                 images.append((img, f))
     return images
+
 
 def processing_pipeline(img):
     img = salt_and_pepper(img)
@@ -46,6 +49,7 @@ def processing_pipeline(img):
     img = add_grain(img)
     return img
 
+
 def save_results(processed_data, output_dir="Results"):
     # Save processed images
     os.makedirs(output_dir, exist_ok=True)
@@ -56,10 +60,11 @@ def save_results(processed_data, output_dir="Results"):
         print(f"Saved: {output_path}")
         print("-" * 40)
 
+
 if __name__ == "__main__":
     args = parse_arguments()
     image_data = load_images(args.input_path)
-    
+
     processed = []
     for img, filename in image_data:
         try:
@@ -67,7 +72,7 @@ if __name__ == "__main__":
             processed.append((processed_img, filename))
         except Exception as e:
             print(f"Failed processing {filename}: {str(e)}")
-    
+
     if processed:
         save_results(processed)
         print(f"Completed {len(processed)} images")

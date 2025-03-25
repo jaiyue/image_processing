@@ -21,7 +21,7 @@ def white_balance(img):
     return result.astype(np.uint8)
 
 def add_grain(img, intensity=0.05):
-    """Add film grain effect"""
+    #Add film grain effect
     noise = np.random.normal(0, intensity*255, img.shape)
     noisy_img = np.clip(img.astype(np.float32) + noise, 0, 255)
     return noisy_img.astype(np.uint8)

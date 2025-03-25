@@ -55,7 +55,7 @@ def save_results(processed_data, output_dir="Results"):
     os.makedirs(output_dir, exist_ok=True)
     for img, filename in processed_data:
         name, ext = os.path.splitext(filename)
-        output_path = os.path.join(output_dir, f"{name}_corrected{ext}")
+        output_path = os.path.join(output_dir, f"{name}{ext}")
         cv2.imwrite(output_path, img)
         print(f"Saved: {output_path}")
         print("-" * 40)

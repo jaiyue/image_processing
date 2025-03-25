@@ -37,7 +37,7 @@ def adjust_contrast(img, clip_limit=0.6):
     return cv2.cvtColor(cv2.merge([clahe.apply(l), a, b]), cv2.COLOR_LAB2BGR)
 
 
-def highlight_blue_boost(img, threshold=235, blue_boost=17):
+def highlight_blue_boost(img, threshold=235, blue_boost=4):
     # Enhance blue in highlight areas
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)

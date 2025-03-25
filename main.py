@@ -40,6 +40,7 @@ def processing_pipeline(img):
     img = sharpen_image(img)
     img = adjust_contrast(img)
     img = white_balance(img)
+    img = highlight_blue_boost(img)
     img = adjust_brightness(img)
     img = darken_highlights(img)
     img = add_grain(img)
